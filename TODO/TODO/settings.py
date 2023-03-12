@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'userapp',
     'corsheaders',
+    'TodoNotes',
 ]
 
 MIDDLEWARE = [
