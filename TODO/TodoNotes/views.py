@@ -10,7 +10,7 @@ from .filters import TodoFilter
 
 
 class ToDoPagination(PageNumberPagination):
-    page_size = 10
+    page_size = 20
 
 
 class ProjectPagination(PageNumberPagination):
