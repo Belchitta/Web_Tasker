@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     'corsheaders',
-    'drf_yasg',
+    'graphene_django',
     'rest_framework.authtoken',
     'userapp',
     'TodoNotes',
@@ -151,6 +151,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+
+GRAPHENE = {
+    "SCHEMA": 'TODO.schema.schema'
+}
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
