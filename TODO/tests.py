@@ -40,8 +40,8 @@ class TestServiceUserModel(TestCase):
         client.login(username='admin', password='admin123')
         response = client.put(f'/api/users/{user.id}/', {'id': '1',
                                                          'username': 'IvanDorn',
-                                                         'firstName': 'Иван',
-                                                         'lastName': 'Дорн',
+                                                         'first_name': 'Иван',
+                                                         'last_name': 'Дорн',
                                                          'email': 'test@email.com'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 

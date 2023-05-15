@@ -6,5 +6,10 @@ class UserSerializer(ModelSerializer):
 
     class Meta:
         model = User
-        # fields = '__all__'
-        exclude = ['id']
+        fields = ('id', 'username', 'first_name', 'last_name', 'email')
+
+
+class UserSerializerUserData(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'first_name', 'last_name', 'email', 'is_superuser', 'is_staff')

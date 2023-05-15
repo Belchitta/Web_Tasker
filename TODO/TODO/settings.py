@@ -37,10 +37,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'django_filters',
-    'userapp',
     'corsheaders',
-    'TodoNotes',
+    'drf_yasg',
     'rest_framework.authtoken',
+    'userapp',
+    'TodoNotes',
 ]
 
 MIDDLEWARE = [
@@ -90,6 +91,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # DRF
 REST_FRAMEWORK = {
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.QueryParameterVersioning',
+    # 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissions'
     ],
