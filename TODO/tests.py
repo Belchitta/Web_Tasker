@@ -29,15 +29,20 @@ class TestTODOModelViewSet(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
-class TestUserModel(TestCase):
-    # APIClient. Тест редактирования, использую права администратора.
+class TestServiceUserModel(TestCase):
+    # APIClient. Тест редактирования, используя права администратора.
     def test_edit(self):
         user = mixer.blend(User)
         client = APIClient()
-        admin = User.objects.create_superuser('admin', 'admin@mail.ru', '123123Xz')
-        client.login(username='admin', password='123123Xz')
-        response = client.put(f'/api/users/{user.id}/', {'firstname': 'John', 'lastname': 'Lenon',
-                                                         'id': '6d3ecdea-072b-4861-93f2-8970ec98c96d'})
+        admin = User.objects.create_superuser(username='admin',
+                                                  password='admin123',
+                                                  email='admin@gmail.com')
+        client.login(username='admin', password='admin123')
+        response = client.put(f'/api/users/{user.id}/', {'id': '1',
+                                                         'username': 'IvanDorn',
+                                                         'firstName': 'Иван',
+                                                         'lastName': 'Дорн',
+                                                         'email': 'test@email.com'})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
