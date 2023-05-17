@@ -12,7 +12,7 @@ function NavbarItem({name, href}) {
 }
 
 
-export default function Navbar({navbarItems, auth, logout}) {
+export default function Navbar({navbarItems, auth, logout, searchTextChange, findProjects}) {
     let login_button = ''
     if (auth.is_login) {
     login_button = <button className="btn btn-outline-success my-2 my-sm-0" onClick={logout}>Hello, {auth.username} Logout</button>
@@ -31,8 +31,8 @@ export default function Navbar({navbarItems, auth, logout}) {
                   {navbarItems.map((item) => <NavbarItem name={item.name} href={item.href} />)}
               </ul>
               <form className="form-inline mt-2 mt-md-0">
-                <input className="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" />
-                <button className="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                <input className="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search" onChange={(event) => searchTextChange(event.target.value)} />
+                <button className="btn btn-outline-success my-2 my-sm-0" type='button' onClick={findProjects}>Search</button>
                 {/* {(auth.is_login) ? <Link to='/login' className="btn btn-outline-success my-2 my-sm-0">Login</Link> : <button className="btn btn-outline-success my-2 my-sm-0" onClick={logout}>Logout</button>} */}
                 {login_button}
               </form>

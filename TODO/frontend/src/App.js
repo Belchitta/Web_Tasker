@@ -15,6 +15,8 @@ import UserList from './components/User.js'
 import {ProjectList, ProjectDetail} from './components/Project.js'
 import ToDoList from './components/ToDo.js'
 import LoginForm from './components/Auth.js'
+import ProjectForm from './components/ProjectForm.js'
+import ToDoForm from './components/ToDoForm.js'
 
 
 
@@ -43,10 +45,50 @@ class App extends React.Component {
             projects: [],
             project: {},
             todos: [],
-            auth: {username: '', is_login: false}
+            auth: {username: '', is_login: false},
+            searchText: '',
+            tempProjects: []
         }
 
     //this.getProject = this.getProject.bind(this);
+    }
+
+    findProjectsFrontend(text) {
+        let filtered_projects = this.state.tempProjects
+        if (text != '') {
+            filtered_projects = filtered_projects.filter((item) => item.name.includes(text))
+        }
+        this.setState({projects: filtered_projects})
+    }
+
+    searchTextChange(text) {
+        this.setState({'searchText': text})
+        this.findProjectsFrontend(text)
+    }
+
+    findProjects() {
+        console.log('Find?')
+        let headers = {
+            'Content-Type': 'application/json'
+        }
+        if (this.state.auth.is_login)
+        {
+            const token = localStorage.getItem('access')
+            headers['Authorization'] = 'Bearer ' + token
+        }
+
+        let url = '/api/projects/'
+        console.log(this.state.searchText)
+        if (this.state.searchText != '') {
+            url = `/api/projects/?name=${this.state.searchText}`
+        }
+
+        console.log(url)
+        axios.get(get_url(url), {headers})
+            .then(response => {
+                this.setState({projects: response.data.results})
+            }).catch(error => console.log(error))
+
     }
 
     login(username, password) {
@@ -77,19 +119,93 @@ class App extends React.Component {
         this.setState({'auth': {username: '', is_login: false}})
     }
 
+    createProject(name, repository) {
+        let headers = {
+            'Content-Type': 'application/json'
+        }
+        if (this.state.auth.is_login)
+        {
+            const token = localStorage.getItem('access')
+            headers['Authorization'] = 'Bearer ' + token
+        }
+
+        const data = {name: name, repository: repository}
+        const options = {headers: headers}
+        axios.post(get_url('/api/projects/'), data, options)
+        .then(response => {
+            this.setState({projects: [...this.state.projects, response.data]})
+        }).catch(error => console.log(error))
+    }
+
+    createToDo(project, text) {
+        let headers = {
+            'Content-Type': 'application/json'
+        }
+        if (this.state.auth.is_login)
+        {
+            const token = localStorage.getItem('access')
+            headers['Authorization'] = 'Bearer ' + token
+        }
+
+        const data = {text: text, project: project}
+        const options = {headers: headers}
+        console.log(data)
+        axios.post(get_url('/api/todos/'), data, options)
+        .then(response => {
+            this.setState({todos: [...this.state.todos, response.data]})
+        }).catch(error => console.log(error))
+    }
+
+    deleteProject(id) {
+        let headers = {
+            'Content-Type': 'application/json'
+        }
+        if (this.state.auth.is_login)
+        {
+            const token = localStorage.getItem('access')
+            headers['Authorization'] = 'Bearer ' + token
+        }
+        axios.delete(get_url(`/api/projects/${id}`), {headers, headers})
+        .then(response => {
+            this.setState({projects: this.state.projects.filter((item)=>item.id != id)})
+        }).catch(error => console.log(error))
+    }
+
+    deleteToDo(id) {
+        let headers = {
+            'Content-Type': 'application/json'
+        }
+        if (this.state.auth.is_login)
+        {
+            const token = localStorage.getItem('access')
+            headers['Authorization'] = 'Bearer ' + token
+        }
+        axios.delete(get_url(`/api/todos/${id}`), {headers, headers})
+        .then(response => {
+            let todos = [...this.state.todos]
+            const todo_index = todos.findIndex((item) => item.id == id)
+            let todo = todos[todo_index]
+            todo.isActive = false
+            this.setState({todos: todos})
+        }).catch(error => console.log(error))
+    }
+
     render() {
          return (
               <BrowserRouter>
                   <header>
-                    <Navbar navbarItems={this.state.navbarItems} auth={this.state.auth} logout={()=>this.logout()} />
+                    <Navbar navbarItems={this.state.navbarItems} auth={this.state.auth} logout={()=>this.logout()}
+searchTextChange={(text)=>this.searchTextChange(text)} findProjects={() => this.findProjects()} />
                   </header>
                   <main role="main" class="flex-shrink-0">
                       <div className="container">
                         <Routes>
                             <Route path='/' element={<UserList users={this.state.users} />} />
-                            <Route path='/projects' element={<ProjectList items={this.state.projects} />} />
-                            <Route path='/todos' element={<ToDoList items={this.state.todos} />} />
+                            <Route path='/projects' element={<ProjectList items={this.state.projects} deleteFunction={(id) => this.deleteProject(id)} />} />
+                            <Route path='/todos' element={<ToDoList items={this.state.todos} deleteFunction={(id) => this.deleteToDo(id)} />} />
                             <Route path='/login' element={<LoginForm login={(username, password) => this.login(username, password)} />} />
+                            <Route path='/project/create' element={<ProjectForm save={(name, repository) => this.createProject(name, repository)} />} />
+                            <Route path='/todo/create' element={<ToDoForm save={(project, text) => this.createToDo(project, text)} projects={this.state.projects} />} />
                             <Route component={NotFound404} />
                             <Route path="/project/:id" element={<ProjectDetail getProject={(id) => this.getProject(id)} item={this.state.project} />} />
                         </Routes>
@@ -142,6 +258,7 @@ class App extends React.Component {
         .then(response => {
             //console.log(response.data)
             this.setState({projects: response.data.results})
+            this.setState({tempProjects: response.data.results})
         }).catch(error => console.log(error))
 
         axios.get(get_url('/api/todos/'), {headers})

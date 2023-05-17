@@ -1,3 +1,5 @@
+from rest_framework.fields import HiddenField, CurrentUserDefault
+from rest_framework.relations import PrimaryKeyRelatedField
 from rest_framework.serializers import ModelSerializer, StringRelatedField
 from .models import Project
 from .models import ToDo
@@ -11,6 +13,7 @@ class ProjectSerializer(ModelSerializer):
     # owner = HyperlinkedIdentityField(view_name='user-detail')
     # Настройка Many to many
     # users = HyperlinkedRelatedField(many=True, view_name='user-detail', read_only=True)
+    users = PrimaryKeyRelatedField(many=True, required=False, read_only=True)
 
     class Meta:
         model = Project
@@ -31,6 +34,7 @@ class ProjectReadSerializer(ModelSerializer):
 
 
 class ToDoSerializer(ModelSerializer):
+    creator = HiddenField(default=CurrentUserDefault())
     class Meta:
         model = ToDo
         # exclude = ('is_active',)

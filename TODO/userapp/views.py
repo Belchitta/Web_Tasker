@@ -12,7 +12,7 @@ class UserViewSet(
         GenericViewSet,
 ):
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]
+    # permission_classes = [AllowAny]
     queryset = User.objects.filter(is_active=True)
 
     def get_serializer_class(self):
