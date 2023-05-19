@@ -5,17 +5,19 @@ from userapp.models import User
 class Command(BaseCommand):
     help = 'Create Superuser and some test users'
 
-    def add_arguments(self, parser):
-        parser.add_argument('count', type=int)
-
     def handle(self, *args, **options):
         # Удаляем все пользоватлелей
         User.objects.all().delete()
-        user_count = options['count']
+
+        users = [
+            {'username': 'fedor', 'first_name': 'Fedor', 'last_name': 'Ivanov', 'email': 'fedor@gmail.com'},
+            {'username': 'elon', 'first_name': 'John', 'last_name': 'Elton', 'email': 'elton@gmail.com'},
+            {'username': 'venom', 'first_name': 'Veniamin', 'last_name': 'Li', 'email': 'venom@mail.com'}
+        ]
         # Создаем суперпользователя
         User.objects.create_superuser('leo', 'leo@test.com', 'dante123456')
         # Создаем тестовых пользователей
-        for i in range(user_count):
-            User.objects.create_user(f'user{i}', f'user{i}@test.com', 'dante123456')
+        for item in users:
+            User.objects.create(**item)
 
         print('done')
