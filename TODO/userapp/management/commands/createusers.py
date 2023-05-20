@@ -15,7 +15,7 @@ class Command(BaseCommand):
             {'username': 'venom', 'first_name': 'Veniamin', 'last_name': 'Li', 'email': 'venom@mail.com'}
         ]
         # Создаем суперпользователя
-        User.objects.create_superuser('leo', 'leo@test.com', 'dante123456')
+        User.objects.create_superuser('leo', 'leo@test.com', 'qwerty123456')
         # Создаем тестовых пользователей
         for item in users:
             User.objects.create(**item)
